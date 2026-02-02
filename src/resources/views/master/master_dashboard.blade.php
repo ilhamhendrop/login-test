@@ -37,6 +37,30 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-2.1.8/fc-5.0.4/fh-4.0.1/r-3.0.3/sc-2.4.3/datatables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        const AUTH_TOKEN = localStorage.getItem('token');
+
+        if (!AUTH_TOKEN) {
+            alert('Silakan login terlebih dahulu');
+            window.location.href = '/';
+        }
+
+        function authAjax(options) {
+            options.headers = options.headers || {};
+            options.headers['Authorization'] = 'Bearer ' + AUTH_TOKEN;
+            return $.ajax(options);
+        }
+
+        $.ajaxSetup({
+            error: function(xhr) {
+                if (xhr.status === 401) {
+                    localStorage.removeItem('token');
+                    alert('Session habis, silakan login kembali');
+                    window.location.href = '/';
+                }
+            }
+        });
+    </script>
     @yield('js')
 </body>
 

@@ -12,7 +12,11 @@ use function Illuminate\Support\now;
 
 class LoginController extends Controller
 {
-    public function Login(Request $request) {
+    public function index() {
+        return view('login.index');
+    }
+
+    public function login(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -42,7 +46,7 @@ class LoginController extends Controller
         $user = User::Where('username', $request->username)->first();
         $token = $user->createToken($user->username)->plainTextToken;
 
-        $expiration = config('sactum.expiration');
+        $expiration = config('sanctum.expiration');;
 
         return response()->json([
             'token' => $token,
@@ -50,7 +54,7 @@ class LoginController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function Logout(Request $request) {
+    public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
