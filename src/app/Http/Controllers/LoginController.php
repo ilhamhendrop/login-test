@@ -13,17 +13,20 @@ use function Illuminate\Support\now;
 
 class LoginController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view('login.index');
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $validator = Validator::make(
             $request->all(),
             [
                 'username' => 'required',
                 'password' => 'required'
-            ], [
+            ],
+            [
                 'username.required' => 'Username tidak boleh kosong',
                 'password.required' => 'Password tidak boleh kosong'
             ]
@@ -40,7 +43,7 @@ class LoginController extends Controller
         $attempts = Cache::get($cacheKey, 0);
         if ($attempts >= 5) {
             return response()->json([
-                'message' => 'Login gagal, coba lagi'
+                'message' => 'Login gagal, coba lagi nanti'
             ], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
@@ -56,12 +59,11 @@ class LoginController extends Controller
 
         Cache::forget($cacheKey);
 
-        $user = User::Where('username', $request->username)->first();
-        Cache::put('user:', $user->id, $user, now()->addHour());
+        $user = User::where('username', $request->username)->first();
+        Cache::put('user:' . $user->id, $user, now()->addHour());
 
         $token = $user->createToken($user->username)->plainTextToken;
-
-        $expiration = config('sanctum.expiration');;
+        $expiration = config('sanctum.expiration');
 
         return response()->json([
             'token' => $token,
@@ -69,12 +71,13 @@ class LoginController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $user = $request->user();
 
         $request->user()->currentAccessToken()->delete();
 
-        Cache::forget('user:'. $user->id);
+        Cache::forget('user:' . $user->id);
 
         return response()->json([
             'message' => 'Berhasil Logout'
