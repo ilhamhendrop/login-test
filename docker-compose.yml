@@ -79,7 +79,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: perpus-redis
+    container_name: login-redis
     command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes"]
     restart: unless-stopped
     volumes:

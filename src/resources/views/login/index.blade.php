@@ -14,7 +14,6 @@
                     </div>
                     <div class="card-body">
                         <form id="loginForm">
-                            @csrf
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="username" type="text" placeholder="Username" />
                                 <label for="inputUsername">Username</label>
@@ -42,6 +41,9 @@
             $.ajax({
                 url: '/api/login',
                 method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 data: {
                     username: $('#username').val(),
                     password: $('#password').val(),
@@ -61,7 +63,6 @@
 
                     alert(msg);
                 }
-
             })
         })
     </script>
